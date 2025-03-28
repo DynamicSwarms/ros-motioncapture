@@ -53,6 +53,8 @@ int main(int argc, char **argv)
   node->declare_parameter<std::string>("topic_name", "pointCloud");
   node->declare_parameter<bool>("add_labeled_markers_to_pointcloud", true);
 
+  node->declare_parameter<double>("latency_threshold", 0.035);
+
   std::string motionCaptureType = node->get_parameter("type").as_string();
   std::string motionCaptureHostname = node->get_parameter("hostname").as_string();
   std::string topicName = node->get_parameter("topic_name").as_string();
@@ -62,8 +64,10 @@ int main(int argc, char **argv)
   const std::map<std::string, rclcpp::ParameterValue> &parameter_overrides =
       node_parameters_iface->get_parameter_overrides();
 
-  logWarn(node->get_logger(), motionCaptureHostname);
-  logWarn(node->get_logger(), motionCaptureType);
+
+  std::stringstream sstr;
+  sstr << "Connecting to " << motionCaptureHostname << " on '" << motionCaptureType << "'. Might block indefinetely if not reachable.";
+  logWarn(node->get_logger(), sstr.str());
   // Make a new client
   std::map<std::string, std::string> cfg;
   cfg["hostname"] = motionCaptureHostname;
@@ -113,8 +117,23 @@ int main(int argc, char **argv)
     // Get a frame
     mocap->waitForNextFrame();
     auto time = node->now();
-
     auto pointcloud = mocap->pointCloud();
+
+    const auto& mocapLatency = mocap->latency();
+    float totalMocapLatency = 0;
+    for (const auto& item : mocapLatency) {
+      totalMocapLatency += item.value();
+    }
+    if (totalMocapLatency > node->get_parameter("latency_threshold").as_double()) {
+      std::stringstream sstr;
+      sstr << "MoCap Latency high: " << totalMocapLatency << " s.";
+      logWarn(node->get_logger(), sstr.str());
+      for (const auto& item : mocapLatency) {
+        std::stringstream sstr;
+        sstr << "  Latency: " << item.name() << ": " << item.value() << " s.";
+        logWarn(node->get_logger(), sstr.str());
+      }
+    }
 
     // publish as pointcloud
     msgPointCloud.header.stamp = time;
