@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 project(ros_motioncapture)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -22,11 +22,11 @@ set(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS OFF)
 set(LIBMOTIONCAPTURE_BUILD_EXAMPLE OFF)
 
 set(LIBMOTIONCAPTURE_ENABLE_QUALISYS ON)
-set(LIBMOTIONCAPTURE_ENABLE_OPTITRACK ON)
-set(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE ON)
+set(LIBMOTIONCAPTURE_ENABLE_OPTITRACK OFF)
+set(LIBMOTIONCAPTURE_ENABLE_OPTITRACK_CLOSED_SOURCE OFF)
 set(LIBMOTIONCAPTURE_ENABLE_VICON ON)
-set(LIBMOTIONCAPTURE_ENABLE_VRPN ON)
-set(LIBMOTIONCAPTURE_ENABLE_FZMOTION ON)
+set(LIBMOTIONCAPTURE_ENABLE_VRPN OFF)
+set(LIBMOTIONCAPTURE_ENABLE_FZMOTION OFF)
 
 # To use NOKOV, place their SDK in
 # motion_capture_tracking/deps/libmotioncapture/deps/nokov_sdk
@@ -51,10 +51,10 @@ add_executable(motioncapture_node src/motioncapture_node.cpp)
 target_link_libraries(motioncapture_node
   libmotioncapture
 )
-ament_target_dependencies(motioncapture_node
-  rclcpp
-  tf2_ros
-  sensor_msgs
+target_link_libraries(motioncapture_node
+  rclcpp::rclcpp
+  tf2_ros::tf2_ros
+  sensor_msgs::sensor_msgs
 )
 
 target_include_directories(motioncapture_node PUBLIC

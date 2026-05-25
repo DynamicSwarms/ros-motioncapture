@@ -70,5 +70,14 @@
         "hash_map": "cpp",
         "strstream": "cpp",
         "cfenv": "cpp"
-    }
+    },
+    "ROS2.distro": "lyrical",
+    "python.autoComplete.extraPaths": [
+        "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
+        "/opt/ros/lyrical/lib/python3.14/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/opt/ros/lyrical/opt/gz_math_vendor/lib/python",
+        "/opt/ros/lyrical/lib/python3.14/site-packages"
+    ]
 }

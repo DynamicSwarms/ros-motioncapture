@@ -4,7 +4,7 @@
 // ROS
 #include <rclcpp/rclcpp.hpp>
 #include <sensor_msgs/msg/point_cloud2.hpp>
-#include <tf2_ros/transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.hpp>
 
 // Motion Capture
 #include <libmotioncapture/motioncapture.h>
@@ -109,7 +109,8 @@ int main(int argc, char **argv)
   msgPointCloud.is_dense = true;
 
   // prepare TF broadcaster
-  tf2_ros::TransformBroadcaster tfbroadcaster(node);
+  auto required_interfaces = rclcpp::node_interfaces::NodeInterfaces(node->get_node_parameters_interface(), node->get_node_topics_interface());
+  tf2_ros::TransformBroadcaster tfbroadcaster(required_interfaces);
   std::vector<geometry_msgs::msg::TransformStamped> transforms;
 
   for (size_t frameId = 0; rclcpp::ok(); ++frameId) {
