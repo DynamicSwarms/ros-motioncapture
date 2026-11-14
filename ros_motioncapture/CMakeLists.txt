@@ -10,12 +10,14 @@ set(CMAKE_INSTALL_RPATH "$ORIGIN")
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(Threads REQUIRED)
 find_package(tf2_ros REQUIRED)
+find_package(tf2_eigen REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(diagnostic_msgs REQUIRED)
 
 find_package(eigen3_cmake_module REQUIRED)
 find_package(Eigen3 REQUIRED)
-find_package(PCL REQUIRED COMPONENTS common)
 
 # add dependencies
 set(LIBMOTIONCAPTURE_BUILD_PYTHON_BINDINGS OFF)
@@ -43,17 +45,19 @@ add_subdirectory(deps/libmotioncapture EXCLUDE_FROM_ALL)
 include_directories(
   deps/libmotioncapture/include
   ${EIGEN3_INCLUDE_DIRS}
-  ${PCL_INCLUDE_DIRS}
 )
 
-add_executable(motioncapture_node src/motioncapture_node.cpp)
+add_executable(motioncapture_node src/motioncapture_node.cpp src/motioncapture_diagnostics.cpp)
 
 target_link_libraries(motioncapture_node
   libmotioncapture
+  Threads::Threads
 )
 target_link_libraries(motioncapture_node
   rclcpp::rclcpp
   tf2_ros::tf2_ros
+  tf2_eigen::tf2_eigen
+  diagnostic_msgs::diagnostic_msgs
   sensor_msgs::sensor_msgs
 )
 
@@ -88,14 +92,6 @@ endif()
 #   #set(ament_cmake_cpplint_FOUND TRUE)
 #   ament_lint_auto_find_test_dependencies()
 # endif()
-
-# Python node
-ament_python_install_package(${PROJECT_NAME})
-
-install(PROGRAMS
-  scripts/motioncapture_node.py
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 # Install launch files.
 install(DIRECTORY

@@ -17,19 +17,6 @@ def generate_launch_description():
             }]
         ),
 
-        # python Node for motion_capture_tracking
-        #Node(
-        #    package='ros_motioncapture',
-        #    executable='motioncapture_node.py',  # the name of the executable file within the package
-        #    name='node2',
-        #    output='screen',
-        #    parameters=[{
-        #        'type': 'vicon',
-        #        'hostname': '172.20.37.251',
-        #        'add_labeled_markers_to_pointcloud': True
-        #    }]
-        #),
-
         # Node for rviz
         Node(
             package='rviz2',
